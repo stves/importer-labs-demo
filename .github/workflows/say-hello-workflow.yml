@@ -1,0 +1,15 @@
+name: actions-importer-labs/circleci-hello-world/say-hello-workflow
+on:
+  push:
+    branches:
+    - main
+jobs:
+  say-hello:
+    runs-on: ubuntu-20.04
+    env:
+      SLEEP_SECONDS: 100
+    steps:
+    - uses: actions/checkout@v3.2.0
+    - name: Say hello
+      run: echo Hello, World!
+    - run: sleep $SLEEP_SECONDS
