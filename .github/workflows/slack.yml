@@ -1,0 +1,62 @@
+name: Slack
+on:
+  workflow_dispatch:
+jobs:
+  Hello:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3.3.0
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE: The Jenkins Pipeline can do a lot of stuff!
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE:
+#     # 'script' was not transformed because there is no suitable equivalent in GitHub Actions
+#     - name: script
+#       arguments:
+#       - key: scriptBlock
+#         value:
+#           isLiteral: true
+#           value: |-
+#             def thread = slackSend(message: "We support threads too")
+#                                 slackSend(channel: thread.threadId, message: "Thread reply #1")
+#                                 slackSend(channel: thread.threadId, message: "Thread reply #2")
+#     # 'script' was not transformed because there is no suitable equivalent in GitHub Actions
+#     - name: script
+#       arguments:
+#       - key: scriptBlock
+#         value:
+#           isLiteral: true
+#           value: |-
+#             def emojiReact = slackSend(message: "And emoji reacts!")
+#                                 emojiReact.addReaction("thumbsup")
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE:
+#     # 'script' was not transformed because there is no suitable equivalent in GitHub Actions
+#     - name: script
+#       arguments:
+#       - key: scriptBlock
+#         value:
+#           isLiteral: true
+#           value: |-
+#             sh "echo hey > blah.txt"
+#                               slackUploadFile filePath: "*.txt", initialComment:  "HEY HEY"
+#     # This item has no matching transformer
+#     - slackUploadFile:
+#       - key: filePath
+#         value:
+#           isLiteral: true
+#           value: "*.txt"
+#       - key: initialComment
+#         value:
+#           isLiteral: true
+#           value: HEY HEY - outside of a script
