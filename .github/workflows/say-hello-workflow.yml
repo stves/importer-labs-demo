@@ -1,8 +1,6 @@
 name: actions-importer-labs/circleci-hello-world/say-hello-workflow
 on:
-  push:
-    branches:
-    - main
+  workflow_dispatch:
 jobs:
   say-hello:
     runs-on: ubuntu-20.04
