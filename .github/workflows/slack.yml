@@ -28,7 +28,7 @@ jobs:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: :shipit:
+        SLACK_ICON_EMOJI: ':shipit:'
     - id: last_build_status
       uses: MercymeIlya/last-workflow-status@v0.3.3
       with:
@@ -39,7 +39,7 @@ jobs:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: :shipit:
+        SLACK_ICON_EMOJI: ':shipit:'
         SLACK_COLOR: success
     - uses: rtCamp/action-slack-notify@v2.2.0
       if: failure() && steps.last_build_status.outputs.last_status == 'success'
@@ -47,7 +47,7 @@ jobs:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: :shipit:
+        SLACK_ICON_EMOJI: ':shipit:'
         SLACK_COLOR: failure
     - uses: rtCamp/action-slack-notify@v2.2.0
       if: cancelled()
@@ -55,7 +55,7 @@ jobs:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: :shipit:
+        SLACK_ICON_EMOJI: ':shipit:'
         SLACK_COLOR: cancelled
     - uses: actions/upload-artifact@v3.1.1
       with:
