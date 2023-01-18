@@ -15,6 +15,10 @@ jobs:
         echo "henlo"
         mkdir -p artifacts
         echo 'This is an artifact' >> artifacts/one.txt
+    - name: Sleep
+      shell: bash
+      run: |-
+        sleep 5
     - name: run command
       shell: bash
       run: |-
