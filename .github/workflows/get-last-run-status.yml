@@ -9,9 +9,30 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/github-script@v6
+      id: last-workflow-status
       env:
         SHA: '${{env.parentSHA}}'
       with:
         script: |
-          console.log('context:')
           console.log(context)
+
+          getWorkflowRunResult = await github.rest.actions.getWorkflowRun({
+            owner: 'stves',
+            repo: 'importer-labs-demo',
+            run_id: context.runId,
+          })
+          
+          workflowId = getWorkflowRunResult.data.workflow_id;
+
+          runsList = await github.rest.actions.listWorkflowRuns({
+            owner: 'stves',
+            repo: 'importer-labs-demo',
+            workflow_id: workflowId,
+            status: 'completed',
+            branch: '${{ env.BRANCH_NAME }}',
+            per_page: 1
+          });
+
+          return runsList.data.workflow_runs[0].conclusion
+    - name: Get result
+      run: echo "${{steps.last-workflow-status.outputs.result}}"
