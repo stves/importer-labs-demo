@@ -13,9 +13,5 @@ jobs:
         SHA: '${{env.parentSHA}}'
       with:
         script: |
+          console.log('context:')
           console.log(context)
-          # await rest.actions.getWorkflowRun({
-          #   owner,
-          #   repo,
-          #   run_id,
-          # });
