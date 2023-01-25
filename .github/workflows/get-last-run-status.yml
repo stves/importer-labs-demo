@@ -1,0 +1,21 @@
+name: Get Last Run Status
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on:
+      - ubuntu-latest
+    environment: CI
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/github-script@v6
+      env:
+        SHA: '${{env.parentSHA}}'
+      with:
+        script: |
+          console.log(context)
+          # await rest.actions.getWorkflowRun({
+          #   owner,
+          #   repo,
+          #   run_id,
+          # });
