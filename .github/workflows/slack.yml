@@ -7,6 +7,11 @@ jobs:
       - ubuntu-latest
     environment: CI
     steps:
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE: Default Custom Message
     - name: checkout
       uses: actions/checkout@v3.3.0
     - name: run command
@@ -17,22 +22,16 @@ jobs:
         echo 'This is an artifact' >> artifacts/one.txt
     - name: run command
       shell: bash
-      run: sleep 1
+      run: sleep 5
     - name: run command
       shell: bash
       run: |-
         mkdir -p artifacts
         echo 'This is from another build step' >> artifacts/two.txt
-        exit 1
-    - name: slack-notify-on-action-start
-      uses: rtCamp/action-slack-notify@v2.2.0
-      env:
-        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
-        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
-        SLACK_MESSAGE: Default Custom Message
+        exit 0
     - id: last_build_status
-      if: always()
       uses: actions/github-script@v6.3.3
+      if: always()
       with:
         result-encoding: string
         script: |-
@@ -52,13 +51,6 @@ jobs:
             per_page: 1
           });
           return runsList.data.workflow_runs[0].conclusion
-    - name: run command
-      if: always()
-      shell: bash
-      run: |-
-        echo '${{ steps.last_build_status.outputs.result }}'
-        echo '${{ steps.last_build_status.outputs.result == 'failure' }}'
-        echo '${{ steps.last_build_status.outputs.result == '"failure"' }}'
     - uses: rtCamp/action-slack-notify@v2.2.0
       if: success()
       env:
@@ -67,11 +59,11 @@ jobs:
         SLACK_MESSAGE: Custom Success Message
         SLACK_COLOR: success
     - uses: rtCamp/action-slack-notify@v2.2.0
-      if: failure() && steps.last_build_status.outputs.result == 'failure'
+      if: failure() && steps.last_build_status.outputs.result == 'success'
       env:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
-        SLACK_MESSAGE: 'Repeated failure :cry:'
+        SLACK_MESSAGE: 'Custom Failure Message :sad:'
         SLACK_COLOR: failure
     - uses: rtCamp/action-slack-notify@v2.2.0
       if: cancelled()
