@@ -30,29 +30,39 @@ jobs:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_MESSAGE: Default Custom Message
-        SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: ":shipit:"
     - id: last_build_status
-      uses: MercymeIlya/last-workflow-status@v0.3.3
+      uses: actions/github-script@v6.3.3
       with:
-        github_token: "${{ secrets.GITHUB_TOKEN }}"
+        script: |-
+          currentWorkflowId = (
+            await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            })
+          ).data.workflow_id
+          runsList = await github.rest.actions.listWorkflowRuns({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: currentWorkflowId,
+            status: 'completed',
+            branch: '${{ env.BRANCH_NAME }}',
+            per_page: 1
+          });
+          return runsList.data.workflow_runs[0].conclusion
     - uses: rtCamp/action-slack-notify@v2.2.0
       if: success()
       env:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
-        SLACK_MESSAGE: 'Custom Success Message :+1:'
-        SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: ":shipit:"
+        SLACK_MESSAGE: Custom Success Message
         SLACK_COLOR: success
     - uses: rtCamp/action-slack-notify@v2.2.0
-      if: failure() && steps.last_build_status.outputs.last_status == 'success'
+      if: failure() && steps.last_build_status.outputs.result == 'success'
       env:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_MESSAGE: 'Custom Failure Message :sad:'
-        SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: ":shipit:"
         SLACK_COLOR: failure
     - uses: rtCamp/action-slack-notify@v2.2.0
       if: cancelled()
@@ -60,8 +70,6 @@ jobs:
         SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
         SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
         SLACK_MESSAGE: Custom Cancelled Message
-        SLACK_USERNAME: hey-its-jenkins
-        SLACK_ICON_EMOJI: ":shipit:"
         SLACK_COLOR: cancelled
     - uses: actions/upload-artifact@v3.1.1
       with:
