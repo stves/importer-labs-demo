@@ -1,0 +1,118 @@
+name: Slack-Designer
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on:
+      - ubuntu-latest
+    steps:
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE: Default Custom Message
+    - name: checkout
+      uses: actions/checkout@v3.3.0
+    - name: run command
+      shell: bash
+      run: |-
+        echo "henlo"
+        mkdir -p artifacts
+        echo 'This is an artifact' >> artifacts/one.txt
+    - name: run command
+      shell: bash
+      run: sleep 5
+    - name: run command
+      shell: bash
+      run: |-
+        mkdir -p artifacts
+        echo 'This is from another build step' >> artifacts/two.txt
+        exit 0
+#     # This item has no matching transformer
+#     - uses: org.jenkinsci.plugins.ansible.AnsiblePlaybookBuilder
+#       with:
+#         plugin: ansible@1.1
+#         playbook: playbook/path
+#         inventory:
+#           class: org.jenkinsci.plugins.ansible.InventoryContent
+#           content: |-
+#             dynamic_inventory
+#             test
+#             with
+#             newlines
+#           dynamic: 'true'
+#         limit: host subset
+#         tags: tags_to_run
+#         skippedTags: tags_to_skip
+#         startAtTask: task_to_start
+#         credentialsId:
+#         vaultCredentialsId: 9daec9c6-c88d-4392-9d61-f22a8a081362
+#         become: 'false'
+#         becomeUser: root
+#         sudo: 'false'
+#         sudoUser: sudo_user
+#         forks: '5'
+#         unbufferedOutput: 'true'
+#         colorizedOutput: 'true'
+#         disableHostKeyChecking: 'false'
+#         additionalParameters: additional_parameter
+#         copyCredentialsInWorkspace: 'false'
+#         extraVars:
+#         - org.jenkinsci.plugins.ansible.ExtraVar:
+#             key: key1
+#             value: val1
+#             hidden: 'false'
+#         - org.jenkinsci.plugins.ansible.ExtraVar:
+#             key: key2
+#             value: val2
+#             hidden: 'false'
+#         - org.jenkinsci.plugins.ansible.ExtraVar:
+#             key: key3
+#             value: val3 with \n newline char
+#             hidden: 'false'
+    - id: last_build_status
+      uses: actions/github-script@v6.4.0
+      if: always()
+      with:
+        result-encoding: string
+        script: |-
+          currentWorkflowId = (
+            await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            })
+          ).data.workflow_id
+          runsList = await github.rest.actions.listWorkflowRuns({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: currentWorkflowId,
+            status: 'completed',
+            branch: '${{ env.BRANCH_NAME }}',
+            per_page: 1
+          });
+          return runsList.data.workflow_runs[0].conclusion
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      if: success()
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE: Custom Success Message
+        SLACK_COLOR: success
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      if: failure() && steps.last_build_status.outputs.result == 'success'
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE: 'Custom Failure Message :sad:'
+        SLACK_COLOR: failure
+    - uses: rtCamp/action-slack-notify@v2.2.0
+      if: cancelled()
+      env:
+        SLACK_WEBHOOK: "${{ secrets.SLACK_WEBHOOK }}"
+        SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+        SLACK_MESSAGE: Custom Cancelled Message
+        SLACK_COLOR: cancelled
+    - uses: actions/upload-artifact@v3.1.1
+      with:
+        path: artifacts/
