@@ -1,0 +1,17 @@
+name: stves1/ci-test
+on:
+  push:
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  packageA:
+    name: packageA-.gitlab-ci
+    uses: "./.github/workflows/packagea-.gitlab-ci.yml@v1"
+  packageB:
+    name: packageB-.gitlab-ci
+    uses: "./.github/workflows/packageb-.gitlab-ci.yml"
+  packageC:
+    name: packageC-.gitlab-ci
+    uses: stves/importer-labs-demo/.github/workflows/packagec-.gitlab-ci.yml@main
