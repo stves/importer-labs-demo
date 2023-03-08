@@ -1,0 +1,11 @@
+# Environment variables defined in a calling workflow are not accessible to this reusable workflow. Refer to the documentation for further details on this limitation.
+name: packageB-.gitlab-ci
+on:
+  workflow_call:
+jobs:
+  job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v3.3.0
+    - run: echo "I am package B"
