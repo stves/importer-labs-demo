@@ -11,7 +11,7 @@ jobs:
     uses: stves/actions-importer-templates/.github/workflows/packagea-.gitlab-ci.yml@v2
   packageB:
     name: packageB-.gitlab-ci
-    uses: "./.github/workflows/reusable-workflows/packageb-.gitlab-ci.yml"
+    uses: "./.github/workflows/reusable-workflows-packageb-.gitlab-ci.yml"
   packageC:
     name: packageC-.gitlab-ci
     uses: stves/actions-importer-templates/.github/workflows/packagec-.gitlab-ci.yml@main
