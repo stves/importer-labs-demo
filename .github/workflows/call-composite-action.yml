@@ -10,5 +10,7 @@ jobs:
         uses: ./.github/actions/composite-actions/greet-someone
         with:
           who-to-greet: 'Mona the Octocat'
+      - id: reusable-workflow
+        uses: ./.github/workflows/reusable-workflows-packageb-.gitlab-ci.yml
       - run: echo random-number ${{ steps.foo.outputs.random-number }}
         shell: bash
