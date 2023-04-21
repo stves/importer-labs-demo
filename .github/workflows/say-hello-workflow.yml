@@ -4,8 +4,9 @@ on:
 jobs:
   say-hello:
     runs-on: ubuntu-20.04
+    container:
     env:
-      SLEEP_SECONDS: 100
+      SLEEP_SECONDS: 10
     steps:
     - uses: actions/checkout@v3.2.0
     - name: Say hello
